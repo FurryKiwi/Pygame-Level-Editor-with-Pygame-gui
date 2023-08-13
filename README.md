@@ -7,7 +7,8 @@ I decided to put it up here for educational purposes for anyone wanting to learn
 To start using the editor, you'll have to edit the settings.py file and setup your folder directory with all your assets you'll be using to build your levels.
 If you use tilesetter for generating blobset tilesets, this works out of the box for the json export from tile setter. Wang tilesets I haven't looked into yet so I don't know if those will work.
 
-![Capture](https://github.com/FurryKiwi/Pygame-Level-Editor-with-Pygame-gui/assets/104323989/a134350f-ab5d-458e-9ab2-d395d8fe2210)
+![Capture](https://github.com/FurryKiwi/Pygame-Level-Editor-with-Pygame-gui/assets/104323989/6125cbe3-f08a-4105-913b-134370838be5)
+
 
 Make sure when exporting the tileset from Tilesetter that you only select the tiles you want otherwise the json file that gets exported with it might be messed up. (Haven't fully tested but just to be safe)
 ![Capture1](https://github.com/FurryKiwi/Pygame-Level-Editor-with-Pygame-gui/assets/104323989/ccce1ce0-3034-4a29-acbf-8f87abaa59dd)
