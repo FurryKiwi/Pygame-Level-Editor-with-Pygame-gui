@@ -1,0 +1,56 @@
+{
+    "#dropdown": {
+        "misc": {
+            "expand_direction": "down",
+            "open_button_width": "0",
+            "shape": "rounded_rectangle"
+        }
+    },
+    "#dropdown.#drop_down_options_list": {
+        "misc": {
+            "shape": "rounded_rectangle"
+        }
+    },
+    "selection_list": {
+        "misc": {
+            "list_item_height": "20"
+        }
+    },
+    "button": {
+        "misc": {
+            "shape": "rounded_rectangle"
+        }
+    },
+    "label": {
+        "misc": {
+
+        },
+        "font": {
+
+        }
+    },
+    "panel": {
+        "misc": {
+            "shape": "rounded_rectangle"
+        }
+    },
+    "text_entry_line": {
+        "misc": {
+            "shape": "rounded_rectangle"
+        },
+        "font": {
+
+        }
+    },
+    "window": {
+        "misc": {
+            "shape": "rounded_rectangle"
+        }
+    },
+    "vertical_scroll_bar": {
+        "misc": {
+            "shape": "rounded_rectangle"
+        }
+    }
+
+}
