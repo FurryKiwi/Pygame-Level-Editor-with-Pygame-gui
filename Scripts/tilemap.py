@@ -51,133 +51,78 @@ class EditorTileMap:
             new_list.append(i)
         return new_list
 
-    def add_tile(self, tile_group, tile_variant, tile_pos, tile_settings):
+    def add_to_tilemap(self, tile_group, tile_variant, tile_pos, tile_settings):
+        """Adds the tile to the ongrid tilemap."""
         pos = str(tile_pos[0]) + ';' + str(tile_pos[1])
+        tile_size = self.app.assets[tile_group][tile_variant].get_size()
         if pos not in self.recent_tiles and self.app.auto_tile:
             self.recent_tiles.append(pos)
         try:
-            if tile_group in OBJECT_TYPES:
-                self.tilemap[str(self.current_layer)].update({str(tile_pos[0]) + ';' + str(tile_pos[1]):
-                                                                  {'type': tile_group,
-                                                                   'variant': tile_variant,
-                                                                   'pos': tile_pos,
-                                                                   'tags': tile_settings}})
-            else:
-                self.tilemap[str(self.current_layer)].update({str(tile_pos[0]) + ';' + str(tile_pos[1]):
-                                                                  {'type': tile_group,
-                                                                   'variant': tile_variant,
-                                                                   'pos': tile_pos}})
+            self.tilemap[str(self.current_layer)].update({str(tile_pos[0]) + ';' + str(tile_pos[1]):
+                                                              {'type': tile_group,
+                                                               'variant': tile_variant,
+                                                               'pos': tile_pos,
+                                                               'size': tile_size,
+                                                               'tags': tile_settings}})
         except KeyError:
-            if tile_group in OBJECT_TYPES:
-                self.tilemap.update({str(self.current_layer): {str(tile_pos[0]) + ';' + str(tile_pos[1]):
-                                                                   {'type': tile_group,
-                                                                    'variant': tile_variant,
-                                                                    'pos': tile_pos,
-                                                                    'tags': tile_settings}}})
-            else:
-                self.tilemap.update({str(self.current_layer): {str(tile_pos[0]) + ';' + str(tile_pos[1]):
-                                                                   {'type': tile_group,
-                                                                    'variant': tile_variant,
-                                                                    'pos': tile_pos}}})
+            self.tilemap.update({str(self.current_layer): {str(tile_pos[0]) + ';' + str(tile_pos[1]):
+                                                               {'type': tile_group,
+                                                                'variant': tile_variant,
+                                                                'pos': tile_pos,
+                                                                'size': tile_size,
+                                                                'tags': tile_settings}}})
+            
+    def add_tile(self, tile_group, tile_variant, tile_pos, tile_settings):
+        """Calls the method to add the tile to the ongrid tilemap."""
+        self.add_to_tilemap(tile_group, tile_variant, tile_pos, tile_settings)
 
         if self.brush_size == 5:
             for shift in [N, S, E, W]:
-                tile_shift = str(tile_pos[0] + shift[0]) + ';' + str(tile_pos[1] + shift[1])
-                if tile_shift not in self.recent_tiles and self.app.auto_tile:
-                    self.recent_tiles.append(tile_shift)
-                new_tile_pos = ((tile_pos[0] + shift[0]), (tile_pos[1] + shift[1]))
-                try:
-                    if tile_group in OBJECT_TYPES:
-                        self.tilemap[str(self.current_layer)].update({tile_shift: {
-                            'type': tile_group, 'variant': tile_variant, 'pos': new_tile_pos,
-                            'tags': tile_settings}})
-                    else:
-                        self.tilemap[str(self.current_layer)].update({tile_shift: {
-                            'type': tile_group, 'variant': tile_variant, 'pos': new_tile_pos}})
-                except KeyError:
-                    if tile_group in OBJECT_TYPES:
-                        self.tilemap.update({str(self.current_layer): {tile_shift: {
-                            'type': tile_group, 'variant': tile_variant, 'pos': new_tile_pos,
-                            'tags': tile_settings}}})
-                    else:
-                        self.tilemap.update({str(self.current_layer): {tile_shift: {
-                            'type': tile_group, 'variant': tile_variant, 'pos': new_tile_pos}}})
+                tile_shift = (tile_pos[0] + shift[0], tile_pos[1] + shift[1])
+                self.add_to_tilemap(tile_group, tile_variant, tile_shift, tile_settings)
         if self.brush_size == 9:
             for shift in [N, S, E, W, NW, NE, SW, SE]:
-                tile_shift = str(tile_pos[0] + shift[0]) + ';' + str(tile_pos[1] + shift[1])
-                if tile_shift not in self.recent_tiles and self.app.auto_tile:
-                    self.recent_tiles.append(tile_shift)
-                new_tile_pos = ((tile_pos[0] + shift[0]), (tile_pos[1] + shift[1]))
-                try:
-                    if tile_group in OBJECT_TYPES:
-                        self.tilemap[str(self.current_layer)].update({tile_shift: {
-                            'type': tile_group, 'variant': tile_variant, 'pos': new_tile_pos,
-                            'tags': tile_settings}})
-                    else:
-                        self.tilemap[str(self.current_layer)].update({tile_shift: {
-                            'type': tile_group, 'variant': tile_variant, 'pos': new_tile_pos}})
-                except KeyError:
-                    if tile_group in OBJECT_TYPES:
-                        self.tilemap.update({str(self.current_layer): {tile_shift: {
-                            'type': tile_group, 'variant': tile_variant, 'pos': new_tile_pos,
-                            'tags': tile_settings}}})
-                    else:
-                        self.tilemap.update({str(self.current_layer): {tile_shift: {
-                            'type': tile_group, 'variant': tile_variant, 'pos': new_tile_pos}}})
+                tile_shift = (tile_pos[0] + shift[0], tile_pos[1] + shift[1])
+                self.add_to_tilemap(tile_group, tile_variant, tile_shift, tile_settings)
+                
+    def delete_tile(self, tile_pos):
+        """Deletes the tile from the tilemap for on grid tiles only."""
+        tile_loc = str(tile_pos[0]) + ';' + str(tile_pos[1])
+        if tile_loc in self.tilemap[str(self.current_layer)]:
+            if self.app.auto_tile:
+                self.recent_tiles.append(tile_loc)
+            else:
+                del self.tilemap[str(self.current_layer)][tile_loc]
 
     def remove_tile(self, tile_pos):
-        # On Grid Tiles
-        tile_loc = str(tile_pos[0]) + ';' + str(tile_pos[1])
+        """Depending on the brush size it will call the method to delete all the tiles from the on grid tilemap."""
         try:
-            if tile_loc in self.tilemap[str(self.current_layer)]:
-                if self.app.auto_tile:
-                    self.recent_tiles.append(tile_loc)
-                else:
-                    del self.tilemap[str(self.current_layer)][tile_loc]
+            self.delete_tile(tile_pos)
             if self.brush_size == 5:
                 for shift in [N, S, E, W]:
-                    tile_shift = str(tile_pos[0] + shift[0]) + ';' + str(tile_pos[1] + shift[1])
-                    if tile_shift in self.tilemap[str(self.current_layer)]:
-                        if self.app.auto_tile:
-                            self.recent_tiles.append(tile_shift)
-                        else:
-                            del self.tilemap[str(self.current_layer)][tile_shift]
+                    self.delete_tile((tile_pos[0] + shift[0], tile_pos[1] + shift[1]))
             if self.brush_size == 9:
                 for shift in [N, S, E, W, NW, NE, SW, SE]:
-                    tile_shift = str(tile_pos[0] + shift[0]) + ';' + str(tile_pos[1] + shift[1])
-                    if tile_shift in self.tilemap[str(self.current_layer)]:
-                        if self.app.auto_tile:
-                            self.recent_tiles.append(tile_shift)
-                        else:
-                            del self.tilemap[str(self.current_layer)][tile_shift]
+                    self.delete_tile((tile_pos[0] + shift[0], tile_pos[1] + shift[1]))
         except KeyError:
             pass
 
     def add_tile_offgrid(self, tile_group, tile_variant, position, tile_settings):
+        tile_size = self.app.assets[tile_group][tile_variant].get_size()
         try:
-            if tile_group in OBJECT_TYPES:
-                self.offgrid_tiles[str(self.current_layer)].update({str(position[0]) + ';' + str(position[1]):
-                                                                        {'type': tile_group,
-                                                                         'variant': tile_variant,
-                                                                         'pos': position,
-                                                                         'tags': tile_settings}})
-            else:
-                self.offgrid_tiles[str(self.current_layer)].update({str(position[0]) + ';' + str(position[1]):
-                                                                        {'type': tile_group,
-                                                                         'variant': tile_variant,
-                                                                         'pos': position}})
+            self.offgrid_tiles[str(self.current_layer)].update({str(position[0]) + ';' + str(position[1]):
+                                                                    {'type': tile_group,
+                                                                     'variant': tile_variant,
+                                                                     'pos': position,
+                                                                     'size': tile_size,
+                                                                     'tags': tile_settings}})
         except KeyError:
-            if tile_group in OBJECT_TYPES:
-                self.offgrid_tiles.update({str(self.current_layer): {str(position[0]) + ';' + str(position[1]):
-                                                                         {'type': tile_group,
-                                                                          'variant': tile_variant,
-                                                                          'pos': position,
-                                                                          'tags': tile_settings}}})
-            else:
-                self.offgrid_tiles.update({str(self.current_layer): {str(position[0]) + ';' + str(position[1]):
-                                                                         {'type': tile_group,
-                                                                          'variant': tile_variant,
-                                                                          'pos': position}}})
+            self.offgrid_tiles.update({str(self.current_layer): {str(position[0]) + ';' + str(position[1]):
+                                                                     {'type': tile_group,
+                                                                      'variant': tile_variant,
+                                                                      'pos': position,
+                                                                      'size': tile_size,
+                                                                      'tags': tile_settings}}})
 
     def remove_tile_offgrid(self, scroll, mpos):
         # TODO: Figure out a better way of doing this
