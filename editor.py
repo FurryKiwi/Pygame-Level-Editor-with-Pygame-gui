@@ -68,7 +68,7 @@ class Editor:
         try:
             self.ui_manager.load_map(MAP_NAME)
         except FileNotFoundError:
-            self.tilemap.create_new()
+            self.ui_manager.create_new()
     def load_assets(self):
         data = {}
         for key, path in TILE_SETS_PATHS.items():
