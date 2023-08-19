@@ -104,9 +104,7 @@ class Editor:
 
             self.tile_group, self.tile_variant = self.ui_manager.get_current_tile()
             tile_settings = self.ui_manager.get_tile_settings()
-            # Pygame-gui updates the dropdown menu when changed but can't update the selected_tile(tile_variant)
-            # fast enough, most likely due to the fact it has to go through the event system first before updating
-            # the variant to 0.
+            
             try:
                 current_tile_img = self.assets[self.tile_group][self.tile_variant].copy()
                 current_tile_img.set_alpha(150)
