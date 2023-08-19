@@ -222,61 +222,31 @@ class UIApp:
         self.tile_images = {}
         self.selected_tile = 0
         rect = self.tilesets_panel.get_relative_rect()
-        size = (rect[2], rect[3])
+        panel_size = (rect[2], rect[3])
 
         cur_tileset = self.tiles_dropdown.selected_option
 
-        if cur_tileset != 'large_decor':
-            tile_size = self.editor.assets[cur_tileset][0].get_size()
-            region_x = size[0] // (tile_size[0] * 2 + tile_size[0])
-            region_y = size[1] // (tile_size[1] * 2 + tile_size[1])
-            count_of_tiles = len(self.editor.assets[cur_tileset])
-            if region_x > count_of_tiles:
-                region_x -= count_of_tiles
-            if region_y > count_of_tiles:
-                region_y = 1
-            x, y = 0, 0
-            for index, tile in enumerate(self.editor.assets[cur_tileset]):
-                if x >= region_x:
-                    y += 1
-                    if y > region_y:
-                        break
-                    x = 0
-                scaled_image = pygame.transform.scale2x(tile)
-                new_tile = gui.elements.UIImage(pygame.Rect(((x * (tile_size[0] * 2 + tile_size[0])) + tile_size[0],
-                                                             y * (tile_size[1] * 2 + tile_size[1]) + tile_size[1]),
-                                                            (scaled_image.get_size())), scaled_image,
-                                                manager=self.manager,
-                                                image_is_alpha_premultiplied=False, container=self.tilesets_panel)
-                self.tile_images.update({index: new_tile})
-                x += 1
-        else:
-            # TODO: This will have to get re-written in the future to account for many different size images in a
-            #  folder and space them out accordingly. For now, this is fine.
-            # count_of_tiles = len(self.editor.assets[cur_tileset])
-            space_between_x = 32
-            space_between_y = 16
-            # region_x = size[0]
-            # region_y = size[1]
-            x, y = 0, 0
-            last_tile_size = 0
-            for index, tile in enumerate(self.editor.assets[cur_tileset]):
-                tile_size = tile.get_size()[0]
-                scaled_image = pygame.transform.scale2x(tile)
-                scaled_size = scaled_image.get_size()
-                new_tile = gui.elements.UIImage(pygame.Rect(((x * (tile_size + space_between_x)) + last_tile_size,
-                                                             y + space_between_y),
-                                                            scaled_size),
-                                                scaled_image, manager=self.manager,
-                                                image_is_alpha_premultiplied=False, container=self.tilesets_panel)
-
-                self.tile_images.update({index: new_tile})
-                last_tile_size = tile_size
-                x += 1
+        region_x = panel_size[0] - 48
+        region_y = panel_size[1] - 48
+        x, y = 0, 0
+        spacer = 16
+        for index, tile in enumerate(self.editor.assets[cur_tileset]):
+            if x >= region_x:
+                y += 32 + spacer
+                if y > region_y:
+                    break
+                x = 0
+            scaled_image = pygame.transform.scale(tile, (32, 32))
+            new_tile = gui.elements.UIImage(pygame.Rect(x + spacer, y + spacer,
+                                                        32, 32), scaled_image,
+                                            manager=self.manager,
+                                            image_is_alpha_premultiplied=False, container=self.tilesets_panel)
+            self.tile_images.update({index: new_tile})
+            x += 32 + spacer
 
         first_image = self.tile_images[0]
         self.update_selected(0, first_image)
-
+        
     def setup_elements(self):
         layers = self.editor.tilemap.get_layers()
         if layers:
